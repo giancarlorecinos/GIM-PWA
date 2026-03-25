@@ -10,7 +10,6 @@ import {
   getDocs,
   onSnapshot,
   serverTimestamp,
-  type QueryConstraint,
   or,
 } from 'firebase/firestore'
 import { firestore } from './config'
@@ -33,14 +32,14 @@ export interface Ticket {
 
 const ticketsRef = collection(firestore, 'tickets')
 
-function buildTicketConstraints(role: UserRole, uid: string): QueryConstraint[] {
+function buildTicketQuery(role: UserRole, uid: string) {
   switch (role) {
     case 'customer':
-      return [where('created_by', '==', uid)]
+      return query(ticketsRef, where('created_by', '==', uid), orderBy('createdAt', 'desc'))
     case 'agent':
-      return [or(where('assigned_to', '==', uid), where('status', '==', 'open'))]
+      return query(ticketsRef, or(where('assigned_to', '==', uid), where('status', '==', 'open')), orderBy('createdAt', 'desc'))
     case 'admin':
-      return []
+      return query(ticketsRef, orderBy('createdAt', 'desc'))
   }
 }
 
@@ -49,8 +48,7 @@ export function subscribeToTickets(
   uid: string,
   callback: (tickets: Ticket[]) => void,
 ) {
-  const constraints = buildTicketConstraints(role, uid)
-  const q = query(ticketsRef, ...constraints, orderBy('createdAt', 'desc'))
+  const q = buildTicketQuery(role, uid)
 
   return onSnapshot(q, (snap) => {
     const tickets = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Ticket)
@@ -59,8 +57,7 @@ export function subscribeToTickets(
 }
 
 export async function getTickets(role: UserRole, uid: string): Promise<Ticket[]> {
-  const constraints = buildTicketConstraints(role, uid)
-  const q = query(ticketsRef, ...constraints, orderBy('createdAt', 'desc'))
+  const q = buildTicketQuery(role, uid)
   const snap = await getDocs(q)
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Ticket)
 }
