@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icon-192.png', 'icon-512.png'],
       manifest: {
-        name: 'Gestion de Incidencias y Mantenimiento',
-        short_name: 'GIM',
-        description: 'PWA para gestion de incidencias y mantenimiento preventivo',
+        name: 'Zyncro | Support Workspace',
+        short_name: 'Zyncro',
+        description: 'Zyncro — Support Workspace for teams',
         theme_color: '#1e293b',
         background_color: '#0f172a',
         display: 'standalone',
