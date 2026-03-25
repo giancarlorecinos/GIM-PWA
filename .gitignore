@@ -10,9 +10,21 @@ lerna-debug.log*
 node_modules
 dist
 .env
-.env.local
+.env.*
+!.env.example
 dist-ssr
 *.local
+
+# GCP / Firebase credentials — never commit
+*.pem
+*.p12
+*.key
+**/service-account*.json
+**/credentials*.json
+**/client_secret*.json
+**/firebase-adminsdk*.json
+**/gcp-key*.json
+**/*-key.json
 
 # Editor directories and files
 .vscode/*
